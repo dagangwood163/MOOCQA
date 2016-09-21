@@ -1,0 +1,57 @@
+<header class="hero-unit" id="banner">
+  <div class="container">
+    <h1>MOOC-QA</h1>
+    <!-- <img src="assets/images/yeoman.png" alt="I'm Yeoman">
+    <img src="assets/images/coursera.svg" alt="Coursera!"> -->
+  </div>
+</header>
+
+<div class="container" infinite-scroll='nextPage()' infinite-scroll-disabled='busy || noMoreData'>
+  <br/>
+  <div style="text-align: center">
+    <a type="button" ng-disabled="!isUserLogIn()" class="btn btn-primary" href="/questions/create">Ask New Question</a>
+    <p class="help-block" ng-show="!isUserLogIn()">
+        Please login or signup first!
+    </p>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th width="20">Follows</th>
+        <th width="20">Answers</th>
+        <th>Question</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="question in questions">
+        <td style="text-align: center; vertical-align:middle">
+          <div style="font-size: xx-large;">{{question.follows.length}}</div>
+        </td>
+        <td style="text-align: center; vertical-align:middle">
+          <div style="font-size: xx-large;">{{question.answers.length}}</div>
+        </td>
+        <td>
+          <div style="float: right;">
+            <span ng-if=" isFollow(question)" class="glyphicon glyphicon-star" style="color: #CF7C00;" ></span>
+            <span ng-if="!isFollow(question)" class="glyphicon glyphicon-star-empty"></span>
+          </div>
+          <a ng-href="/questions/show/{{question._id}}" style="font-size: large">{{question.title}}</a>
+          <div class="clearfix"></div>
+          <div style="float: right;">
+            by <a ng-href="/users/{{question.user._id}}">{{question.user.name}}</a>
+             - {{question.createdAt|fromNow}}
+          </div>
+          <div>
+              <span class="label label-info">
+                {{question.classname}}
+              </span>
+              &nbsp;
+          </div>
+          <div class="clearfix"></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div ng-show='busy'>Loading more questions...</div>
+</div>

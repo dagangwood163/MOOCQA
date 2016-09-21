@@ -1,0 +1,32 @@
+<div class="container">
+  <form name="form" ng-submit="submit()">
+    
+      <h2>Question Title:</h2>
+    <input type="text" class="form-control" ng-model="question.title" name="question_title" required>
+    <span class="text-danger" ng-messages="form.question_title.$error">
+      <span ng-message="required">Required</span>
+    </span>
+      <span class="text-success" ng-show="form.question_title.$valid">OK</span>
+    
+    <h2>Course Name:</h2>
+    <input type="text" class="form-control" ng-model="question.classname" name="question_classname" required>
+    <span class="text-danger" ng-messages="form.question_classname.$error">
+      <span ng-message="required">Required</span>
+    </span>
+      <span class="text-success" ng-show="form.question_classname.$valid">OK</span>
+    
+    
+    <h2>Question Details:</h2>
+    <pagedown-editor ng-model="question.content" name="question_content" required></pagedown-editor>
+    <span class="text-danger" ng-messages="form.question_content.$error">
+      <span ng-message="required">Required</span>
+    </span>
+    <span class="text-success" ng-show="form.question_content.$valid">OK</span>    
+    
+    <br>
+    <br>
+ 
+    <input type="submit" class="btn btn-primary" ng-disabled="form.$invalid" value="Post question">
+      
+  </form>
+</div>

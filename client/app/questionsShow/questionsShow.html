@@ -1,0 +1,212 @@
+<!-- <p><button type='button' ng-click="openModal()">Open modal</button></p> -->
+<!-- <p><button type='button' ng-click='openConfirmDialog()'>Open Confirm</button></p>  -->
+
+<div class="container" id="question-show-container">
+  <div>
+    <button ng-if="isOwner(question)" type="button" class="close" confirm="Are you sure?" ng-click="deleteQuestion()">
+	<!-- &times; -->
+	<span class="glyphicon glyphicon-remove"></span>
+	</button>
+
+    <div style="float: left;font-size: x-large; padding: 0; width: 2em; text-align: center;">
+      <button ng-if=" isFollow(question)" type="button" style="background: transparent; border: 0;" ng-click="unfollow('')">
+        <span class="glyphicon glyphicon-star" style="color: #CF7C00;" ></span>
+      </button>
+      <button ng-if="!isFollow(question)" type="button" style="background: transparent; border: 0;" ng-click="follow('')"  >
+        <span class="glyphicon glyphicon-star-empty"></span>
+      </button>
+      <br/>
+      <div>{{question.follows.length}}</div>
+    </div>      
+      
+    <div>
+      <h3>
+        <span ng-if="! editting_question">{{question.title}}</span>
+          <!-- <div class="form-horizontal" ng-if="editting" >
+            <label for="title">Title:</label>
+            <input type="text" class="form-control" name="title" id="title" ng-model="question.title">
+            <label class="col-md-4">Question Title:</label>
+            <input class="col-md-4" name="title" ng-if="editting" type="text" ng-model="question.title">  			
+          </div>         -->
+          <div ng-if="editting_question" >
+			<label class="col-md-3">Question Title:</label> 
+			<input class="col-md-7" ng-if="editting_question" type="text" ng-model="question.title">
+          </div>
+      </h3>
+      <h3>
+        <span ng-if="!editting_question" class="label label-info"> {{question.classname}} </span>
+         <!-- <div class="form-horizontal"  ng-if="editting" >
+            <label for="name">ClassName:</label>
+                <input type="text" class="form-control" name="name" id="name" ng-model="question.classname">
+            <label class="col-md-4">Class Name:</label>
+            <input class="col-md-4" name="title" ng-if="editting" type="text" ng-model="question.classname">				
+        </div> -->
+          <div ng-if="editting_question">
+			<label class="col-md-3">Course Name: </label> 
+			<input class="col-md-7" ng-if="editting_question" type="text" ng-model="question.classname">
+          </div>
+      </h3>        
+    </div>
+  </div>
+  <hr/>
+
+    <br>
+    <br>
+    
+  <pagedown-viewer content="question.content" ng-if="!editting_question"></pagedown-viewer>
+  <pagedown-editor ng-model="question.content" ng-if=" editting_question"></pagedown-editor>
+    
+  <button type="button" class="btn btn-primary" ng-click="editting_question=false;updateQuestion()" ng-show=" editting_question">Save</button>  
+  <button type="button" class="btn btn-primary" ng-click="editting_question=false;cancelupdateQuestion()" ng-show=" editting_question">Cancel</button>
+    
+  <a ng-click="editting_question=!editting_question;" ng-show="isOwner(question) && !editting_question">Edit</a>
+
+    
+    
+    
+    
+    
+  <div class="text-right">by <a ng-href="/users/{{question.user._id}}">{{question.user.name}}</a> - {{question.createdAt|fromNow}}</div>
+  &nbsp;
+  <div class="comment">
+    <div ng-repeat="comment in question.comments">
+      <hr/>
+     <button ng-if="isOwner(comment)" type="button" class="close" ng-click="deleteComment(comment)">
+	 <!-- &times; -->
+	 <span class="glyphicon glyphicon-remove"></span>
+	 </button>
+        
+      <div style="float: left;font-size: normal; padding: 0; width: 2em; text-align: center;">
+        <button ng-if=" isFollow(comment)" type="button" style="background: transparent; border: 0;" ng-click="unfollow('/comments/' + comment._id)">
+          <span class="glyphicon glyphicon-star" style="color: #CF7C00;" ></span>
+        </button>
+        <button ng-if="!isFollow(comment)" type="button" style="background: transparent; border: 0;" ng-click="  follow('/comments/' + comment._id)"  >
+          <span class="glyphicon glyphicon-star-empty"></span>
+        </button>
+        <br/>
+        <div>{{comment.follows.length}}</div>
+      </div>
+
+      <br>  
+      <br> 
+      <pagedown-viewer content="comment.content" ng-if="!editting_comment"></pagedown-viewer>
+      <pagedown-editor ng-model="comment.content" ng-if=" editting_comment"></pagedown-editor>
+      <button type="button" class="btn btn-primary" ng-click="editting_comment=false;updateComment(comment)" ng-show=" editting_comment">Save</button>
+      <button type="button" class="btn btn-primary" ng-click="editting_comment=false;cancelupdateComment()" ng-show=" editting_comment">Cancel</button>        
+        
+      <a ng-click="editting_comment=!editting_comment;" ng-show="isOwner(comment) && !editting_comment">Edit</a>
+
+      <div class="text-right" style="vertical-align: bottom;">by <a ng-href="/users/{{comment.user._id}}">{{comment.user.name}}</a> - {{comment.createdAt|fromNow}}</div>
+      <div class="clearfix"></div>
+    </div>
+    <hr/>
+    <a ng-click="editNewComment=!editNewComment;">Add a comment</a>
+    <form ng-if="editNewComment" name="commentForm">
+      <pagedown-editor ng-model="newComment.content" editor-class="'comment-wmd-input'"
+        name="commentEditor" required>
+      </pagedown-editor>
+      <p class="help-block" ng-show="!isUserLogIn()">
+        Please login or signup first!
+      </p>     
+      <button type="button" class="btn btn-primary" ng-click="submitComment()" ng-disabled="commentForm.$invalid || !isUserLogIn()">Add Comment</button>
+      <button type="button" class="btn btn-primary" ng-disabled="commentForm.$invalid || !isUserLogIn()" ng-click="cancelsubmitComment()">Cancel</button>      
+    </form>
+  </div>
+
+    
+    
+    
+  &nbsp;
+  <h3>{{question.answers.length}} Answers</h3>
+  <div ng-repeat="answer in question.answers">
+    <hr/>
+
+    <div style="float: left;font-size: large; padding: 0; width: 2em; text-align: center;">
+      <button ng-if=" isFollow(answer)" type="button" style="background: transparent; border: 0;" ng-click="unfollow('/answers/' + answer._id)">
+        <span class="glyphicon glyphicon-star" style="color: #CF7C00;" ></span>
+      </button>
+      <button ng-if="!isFollow(answer)" type="button" style="background: transparent; border: 0;" ng-click="  follow('/answers/' + answer._id)"  >
+        <span class="glyphicon glyphicon-star-empty"></span>
+      </button>
+      <br/>
+      <div>{{answer.follows.length}}</div>
+    </div>
+
+    <div class="answer">
+      <button ng-if="isOwner(answer)" type="button" class="close" ng-click="deleteAnswer(answer)">
+	  <!-- &times; -->
+	  <span class="glyphicon glyphicon-remove"></span>
+	  </button>
+      <pagedown-viewer content="answer.content" ng-if="!editting_answer"></pagedown-viewer>
+      <pagedown-editor ng-model="answer.content" ng-if=" editting_answer"></pagedown-editor>
+      <button type="button" class="btn btn-primary" ng-click="editting_answer=false;updateAnswer(answer)" ng-show=" editting_answer">Save</button>
+      <button type="button" class="btn btn-primary" ng-click="editting_answer=false;cancelupdateAnswer()" ng-show=" editting_answer">Cancel</button>
+        
+      <a ng-click="editting_answer=!editting_answer;" ng-show="isOwner(answer) && !editting_answer">Edit</a>
+    </div>
+
+
+    <div class="text-right">by {{answer.user.name}} - {{answer.createdAt|fromNow}}</div>
+    <div class="comment">
+      <div ng-repeat="comment in answer.comments">
+        <hr/>
+        <button ng-if="isOwner(comment)" type="button" class="close" ng-click="deleteAnswerComment(answer, comment)">
+		<!-- &times; -->
+		<span class="glyphicon glyphicon-remove"></span>
+		</button>
+
+
+         <div style="float: left;font-size: normal; padding: 0; width: 2em; text-align: center;">
+          <button ng-if=" isFollow(comment)" type="button" style="background: transparent; border: 0;" ng-click="unfollow('/answers/' + answer._id + '/comments/' + comment._id)">
+            <span class="glyphicon glyphicon-star" style="color: #CF7C00;" ></span>
+          </button>
+          <button ng-if="!isFollow(comment)" type="button" style="background: transparent; border: 0;" ng-click="  follow('/answers/' + answer._id + '/comments/' + comment._id)"  >
+            <span class="glyphicon glyphicon-star-empty"></span>
+          </button>
+          <br/>
+          <div>{{comment.follows.length}}</div>
+        </div>
+
+
+      <br>  
+      <br>          
+        <pagedown-viewer content="comment.content" ng-if="!editting_answer_comment"></pagedown-viewer>
+        <pagedown-editor ng-model="comment.content" ng-if=" editting_answer_comment"></pagedown-editor>
+        <button type="button" class="btn btn-primary" ng-click="editting_answer_comment=false;updateAnswerComment(answer, comment)" ng-show=" editting_answer_comment">Save</button>
+        <button type="button" class="btn btn-primary" ng-click="editting_answer_comment=false;cancelupdateAnswerComment()" ng-show=" editting_answer_comment">Cancel</button> 
+          
+        <a ng-click="editting_answer_comment=!editting_answer_comment;" ng-show="isOwner(comment) && !editting_answer_comment">Edit</a>
+
+        <div class="text-right">by <a ng-href="/users/{{question.user._id}}">{{comment.user.name}}</a> - {{comment.createdAt|fromNow}}</div>
+        <div class="clearfix"></div>
+      </div>
+      <hr/>
+      <a ng-click="editNewAnswerComment=!editNewAnswerComment;answer.newAnswerComment={}">add a comment</a>
+      <form ng-if="editNewAnswerComment" name="answer_{{answer.id}}_comment">
+        <hr/>
+        <pagedown-editor ng-model="answer.newAnswerComment.content" editor-class="'comment-wmd-input'"
+          required>
+        </pagedown-editor>
+        <p class="help-block" ng-show="!isUserLogIn()">
+        Please login or signup first!
+        </p>   
+        <button type="button" class="btn btn-primary" ng-click="submitAnswerComment(answer)" ng-disabled="answer_{{answer.id}}_comment.$invalid || !isUserLogIn()">Add Comment</button>
+        <button type="button" class="btn btn-primary" ng-click="cancelsubmitAnswerComment()" ng-disabled="answer_{{answer.id}}_comment.$invalid || !isUserLogIn()">Cancel</button>          
+      </form>
+    </div>
+  </div>
+  <hr/>
+    
+  <h3>Your answer</h3>
+  <form name="answerForm" >
+    <pagedown-editor ng-model="newAnswer.content" name="answerEditor" required></pagedown-editor>
+      <p class="help-block" ng-show="!isUserLogIn()">
+        Please login or signup first!
+      </p>
+    <input type="button" ng-click="submitAnswer()" class="btn btn-primary" ng-disabled="answerForm.$invalid || !isUserLogIn()" value="Submit your answer">
+    <input type="button" ng-click="cancelsubmitAnswer()" class="btn btn-primary" ng-disabled="answerForm.$invalid || !isUserLogIn()" value="Cancel">  
+  </form>
+    
+</div>
+
+
